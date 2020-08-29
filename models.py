@@ -26,6 +26,7 @@ class User(db.Model):
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, nullable=False)
+    title = db.Column(db.DateTime, nullable=False)
     messages = db.relationship("Message", backref="post")
 
 
