@@ -14,8 +14,10 @@ def create_app(db=db, config=Config):
     print(f"Using database at {app.config['SQLALCHEMY_DATABASE_URI']}")
 
     app.register_blueprint(api)
-    app.add_url_rule('/graphql', view_func=GraphQLView.as_view('graphql',
-                     schema=schema, graphiql=True))
+    app.add_url_rule(
+        "/graphql",
+        view_func=GraphQLView.as_view("graphql", schema=schema, graphiql=True),
+    )
 
     app.app_context().push()
 

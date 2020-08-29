@@ -7,7 +7,7 @@ from config import TestConfig
 from models import db
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def setup_test_app():
 
     app = create_app(config=TestConfig)
@@ -20,11 +20,11 @@ def setup_test_app():
     with app.test_client() as client:
         yield client, db, app
 
-    print('Removing Test DB')
+    print("Removing Test DB")
     try:
         os.remove(TestConfig.db_filepath)  # this is teardown
     except FileNotFoundError:
-        Warning('Did not manage to tear down test DB, hope this was a temporary env')
+        Warning("Did not manage to tear down test DB, hope this was a temporary env")
 
 
 @pytest.fixture(scope="module")
@@ -36,10 +36,8 @@ def test_db(setup_test_app):
 
 @pytest.fixture(scope="module")
 def populate_test_db(test_db):
-    user = models.User(number='1234')
-    assert user.number is '1234'
+    user = models.User(number="1234")
+    assert user.number is "1234"
 
     db.session.add(user)
     db.session.commit()
-
-
