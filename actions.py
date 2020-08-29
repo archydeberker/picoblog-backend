@@ -2,7 +2,7 @@ import models
 import re
 
 from datetime import datetime
-
+from contentful_utils import client
 
 def get_or_create(model, session=models.db.session, **kwargs):
     """
@@ -28,8 +28,15 @@ def store_new_message(message_form):
     msg = models.Message(body=body,
                          user=user,
                          sent=datetime.now(),
-                         received=datetime.now())
+                         received=datetime.now(),
+                         tags=tags)
 
+    models.db.add(msg)
+    models.db.commit()
+
+    # As an experiment, we'll also add it to contentful
+    new_entry = {'content_type_id': 'whatsAppMessage',
+                 'fields': dict(body=body, from=message_form['From'], timestamp_received=datetime.now())}}
 
 def parse_message(message):
     """
