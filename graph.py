@@ -1,24 +1,58 @@
 """
 Graph SQL API to expose our data for Gatsby.
 """
-from graphene import ObjectType, String, Schema
+import graphene
+from graphene_sqlalchemy import SQLAlchemyObjectType
+import models
 
 
-class Query(ObjectType):
-    hello = String(name=String(default_value="stranger"))
-    goodbye = String()
-
-    def resolve_hello(root, info, name):
-        return f"Hello {name}"
-
-    def resolve_goodbye(root, info):
-        return 'See ya'
+class User(SQLAlchemyObjectType):
+    class Meta:
+        model = models.User
 
 
-schema = Schema(query=Query)
+class Post(SQLAlchemyObjectType):
+    class Meta:
+        model = models.Post
 
-if __name__ == '__main__':
-    query = '{hello}'
+
+class Message(SQLAlchemyObjectType):
+    class Meta:
+        model = models.Message
+
+
+class Tag(SQLAlchemyObjectType):
+    class Meta:
+        model = models.Tag
+
+
+class Query(graphene.ObjectType):
+    users = graphene.List(User)
+    messages = graphene.List(Message)
+    posts = graphene.List(Post)
+    tags = graphene.List(Tag)
+
+    def resolve_users(self, info):
+        query = User.get_query(info)
+        return query.all()
+
+    def resolve_posts(self, info):
+        query = Post.get_query(info)
+        return query.all()
+
+    def resolve_messages(self, info):
+        query = Message.get_query(info)
+        return query.all()
+
+    def resolve_tags(self, info):
+        query = Tag.get_query(info)
+        return query.all()
+
+
+schema = graphene.Schema(query=Query)
+
+if __name__ == "__main__":
+    query = "{hello}"
     result = schema.execute(query)
     print(result)
     query = '{hello(name: "GraphQL")}'

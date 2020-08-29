@@ -1,6 +1,7 @@
 import pytest
 import os
 
+import models
 from app_factory import create_app
 from config import TestConfig
 from models import db
@@ -31,3 +32,14 @@ def test_db(setup_test_app):
     _, db, _ = setup_test_app
 
     yield db
+
+
+@pytest.fixture(scope="module")
+def populate_test_db(test_db):
+    user = models.User(number='1234')
+    assert user.number is '1234'
+
+    db.session.add(user)
+    db.session.commit()
+
+
