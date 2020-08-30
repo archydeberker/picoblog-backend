@@ -13,7 +13,7 @@ def remove_hashtags(text):
 
 
 def find_hashtags(text):
-    return re.findall(constants.TAG_REGEX, text)
+    return [tag.strip() for tag in re.findall(constants.TAG_REGEX, text)]
 
 
 def contentful_to_dict(entry):

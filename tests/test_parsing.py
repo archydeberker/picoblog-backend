@@ -1,8 +1,11 @@
 import actions
-from tests.fixtures import test_db, setup_test_app
+import models
 
-
-def test_tag_parsing(test_db):
-    test_message = '#title My Great Adventure'
-    body, tags = actions.parse_message(test_message)
+def test_hashtag_detection():
+    text = '#title our new title'
+    tags = models.find_hashtags(text)
     assert '#title' in tags
+
+    text = '#publish'
+    tags = models.find_hashtags(text)
+    assert '#publish' in tags
