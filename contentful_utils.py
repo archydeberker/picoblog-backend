@@ -47,6 +47,7 @@ def upload_message_to_contentful(message: WhatsAppMessage):
 def archive_messages(messages: List[Entry]):
     for entry in messages:
         try:
+            entry.unpublish()
             entry.archive()
         except Exception as e:
             print(e)
