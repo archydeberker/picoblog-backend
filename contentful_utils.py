@@ -21,7 +21,7 @@ environment = client.environments(CONTENTFUL_SPACE).find(CONTENTFUL_ENVIRONTMENT
 
 
 def generate_new_entry_id():
-    return str(random.randint(1, 1000))
+    return str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
 
 
 def upload_assets_to_contentful(media: Media):
