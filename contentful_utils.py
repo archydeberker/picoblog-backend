@@ -5,7 +5,7 @@ from typing import List
 import contentful_management
 from contentful import Entry
 
-from constants import CONTENTFUL_WHATSAPP_TYPE, CONTENTFUL_POST_TYPE
+from constants import CONTENTFUL_WHATSAPP_TYPE, CONTENTFUL_POST_TYPE, TIME_FORMAT
 from models import WhatsAppMessage, Post
 
 client = contentful_management.Client('CFPAT-JhmsGHABq620dFA4KsLlLvfinkhE8nKuSbhtvF5O0Fc')
@@ -35,7 +35,7 @@ def upload_message_to_contentful(message: WhatsAppMessage):
         "fields": {
             "body": {"en-US": message.body},
             "from": {"en-US": message.sender},
-            "received": {"en-US": datetime.now().strftime("%m/%d/%Y, %H:%M:%S")},
+            "received": {"en-US": datetime.now().strftime(TIME_FORMAT)},
         },
     }
 
