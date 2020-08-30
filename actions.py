@@ -13,6 +13,10 @@ def build_and_publish_post():
     :return:
     """
     messages = contentful_utils.get_all_unpublished_messages()
+    if len(messages) is 0:
+        print('Aborting, no new messages')
+        return []
+
     new_messages = [WhatsAppMessage(contentful_to_dict(m)) for m in messages]
 
     post = Post(messages=new_messages)
@@ -33,6 +37,7 @@ def handle_new_message(message_dict):
 
     message = WhatsAppMessage(message_dict)
     if message.publish:
+        print('Found publish trigger')
         included_messages = build_and_publish_post()
         contentful_utils.archive_messages(included_messages)
     else:

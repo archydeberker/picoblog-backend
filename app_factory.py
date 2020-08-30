@@ -1,7 +1,6 @@
 from flask import Flask
 
 from config import Config
-from graph import schema
 from routes import api
 
 
