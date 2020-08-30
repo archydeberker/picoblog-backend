@@ -46,9 +46,11 @@ def upload_message_to_contentful(message: WhatsAppMessage):
 
 def archive_messages(messages: List[Entry]):
     for entry in messages:
-        # entry.publish()
-        entry.archive()
-        # entry.save()
+        entry.publish()
+        try:
+            entry.archive()
+        except:
+            print('Failed to archive')
 
 
 def upload_post_to_contentful(post: Post):
