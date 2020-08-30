@@ -26,7 +26,7 @@ class WhatsAppMessage:
     raw: dict
 
     def __post_init__(self):
-        self.body = remove_hashtags(self.raw['Body'])
+        self.body = self.raw['Body']
         self.tags = find_hashtags(self.raw['Body'])
         self.sender = self.raw['From']
 
@@ -48,7 +48,7 @@ class Post:
     messages: List[Entry]
 
     def __post_init__(self):
-        self.body = '\n'.join([m.body for m in self.messages])
+        self.body = '\n'.join([remove_hashtags(m.body) for m in self.messages])
 
     @property
     def title(self):

@@ -26,7 +26,7 @@ def upload_asset_to_contentful():
 def get_all_unpublished_messages():
     messages = environment.entries().all()
     return [m for m in messages if m.content_type.id ==
-            CONTENTFUL_WHATSAPP_TYPE and not m.is_published]
+            CONTENTFUL_WHATSAPP_TYPE and not m.is_archived]
 
 
 def upload_message_to_contentful(message: WhatsAppMessage):
@@ -46,7 +46,6 @@ def upload_message_to_contentful(message: WhatsAppMessage):
 
 def archive_messages(messages: List[Entry]):
     for entry in messages:
-        entry.publish()
         try:
             entry.archive()
         except:
