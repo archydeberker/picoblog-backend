@@ -12,5 +12,3 @@ def new_message():
     print(msg)
     handle_new_message(msg)
     return json.dumps("Message Received")
-
-

@@ -23,10 +23,11 @@ def test_new_post_creation():
 
 
 def test_media_creation():
-    new_media = Media(url='https://api.twilio.com/2010-04-01/Accounts/AC4fe532def6dbef2698bdf45bda6118fe/Messages/MM1a174bfeb039067dadfc3e6dce72131c/Media/ME3f776cb7a25808dc38c5b6b12235009b',
-                      content_type='image/jpeg',
-                      title='test_upload2',
-                      owner='archy'
-                      )
+    new_media = Media(
+        url="https://api.twilio.com/2010-04-01/Accounts/AC4fe532def6dbef2698bdf45bda6118fe/Messages/MM1a174bfeb039067dadfc3e6dce72131c/Media/ME3f776cb7a25808dc38c5b6b12235009b",
+        content_type="image/jpeg",
+        title="test_upload2",
+        owner="archy",
+    )
 
     upload_assets_to_contentful(new_media)
