@@ -11,3 +11,5 @@ TIME_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
 CONTENTFUL_WHATSAPP_TYPE = "whatsAppMessage"
 CONTENTFUL_POST_TYPE = "post"
 TAG_REGEX = '#[A-Za-z]*\S'
+CONTENTFUL_SPACE = 'ykwd6jregaye'
+CONTENTFUL_ENVIRONTMENT_ID = 'master'

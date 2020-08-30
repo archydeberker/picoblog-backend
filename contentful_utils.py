@@ -5,14 +5,13 @@ from typing import List
 import contentful_management
 from contentful import Entry
 
-from constants import CONTENTFUL_WHATSAPP_TYPE, CONTENTFUL_POST_TYPE, TIME_FORMAT, CONTENTFUL_TOKEN
+from constants import CONTENTFUL_WHATSAPP_TYPE, CONTENTFUL_POST_TYPE, TIME_FORMAT, CONTENTFUL_TOKEN, CONTENTFUL_SPACE, \
+    CONTENTFUL_ENVIRONTMENT_ID
 from models import WhatsAppMessage, Post, Media
 
 client = contentful_management.Client(CONTENTFUL_TOKEN)
 
-space = 'ykwd6jregaye'
-environment_id = 'master'
-environment = client.environments(space).find(environment_id)
+environment = client.environments(CONTENTFUL_SPACE).find(CONTENTFUL_ENVIRONTMENT_ID)
 
 
 def generate_new_entry_id():
@@ -102,9 +101,9 @@ def upload_post_to_contentful(post: Post):
 
 if __name__ == '__main__':
     spaces = client.spaces().all()
-    assets = client.assets(space, environment_id).all()
+    assets = client.assets(CONTENTFUL_SPACE, CONTENTFUL_ENVIRONTMENT_ID).all()
     print(assets)
-    entries = client.entries(space, environment_id).all()
+    entries = client.entries(CONTENTFUL_SPACE, CONTENTFUL_ENVIRONTMENT_ID).all()
     most_recent = entries[0]
     print(most_recent)
 

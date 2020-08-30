@@ -30,7 +30,7 @@ class WhatsAppMessage:
         self.tags = find_hashtags(self.raw['Body'])
         self.sender = self.raw['From']
 
-        if self.raw['NumMedia'] > 0:
+        if int(self.raw['NumMedia']) > 0:
             # I haven't managed to send multiple files combined yet, not sure why
             # Any media items are available from Twilio at this URL
             self.media = Media(url=self.raw.get('MediaUrl0'),
