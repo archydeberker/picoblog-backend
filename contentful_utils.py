@@ -62,6 +62,7 @@ def upload_post_to_contentful(post: Post):
             "body": {"en-US": post.body},
             "title": {'en-US': post.title},
             "slug": {'en-US': post.slug},
+            "publishDate": {'en-US': datetime.now().strftime(TIME_FORMAT)},
         },
     }
 
