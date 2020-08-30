@@ -5,10 +5,10 @@ from typing import List
 import contentful_management
 from contentful import Entry
 
-from constants import CONTENTFUL_WHATSAPP_TYPE, CONTENTFUL_POST_TYPE, TIME_FORMAT
+from constants import CONTENTFUL_WHATSAPP_TYPE, CONTENTFUL_POST_TYPE, TIME_FORMAT, CONTENTFUL_TOKEN
 from models import WhatsAppMessage, Post
 
-client = contentful_management.Client('CFPAT-JhmsGHABq620dFA4KsLlLvfinkhE8nKuSbhtvF5O0Fc')
+client = contentful_management.Client(CONTENTFUL_TOKEN)
 
 space = 'ykwd6jregaye'
 environment_id = 'master'
