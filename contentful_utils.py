@@ -48,7 +48,8 @@ def archive_messages(messages: List[Entry]):
     for entry in messages:
         try:
             entry.archive()
-        except:
+        except Exception as e:
+            print(e)
             print('Failed to archive')
 
 

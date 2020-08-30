@@ -57,6 +57,6 @@ class Post:
         """
         for message in self.messages:
             if message.title:
-                return message.body
+                return remove_hashtags(message.body)
 
         return 'Dummy Title2'
