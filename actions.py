@@ -1,56 +1,39 @@
-import models
-import re
+import contentful_utils
+from models import WhatsAppMessage, Post, contentful_to_dict
 
-from datetime import datetime
-from contentful_utils import client
 
-def get_or_create(model, session=models.db.session, **kwargs):
+def extract_assets(message_dict):
+    pass
+
+
+def build_and_publish_post():
     """
-    Retrieve item from the DB, create it if it doesn't exist already.
-    """
-    instance = session.query(model).filter_by(**kwargs).first()
-    if instance:
-        return instance
-    else:
-        instance = model(**kwargs)
-        session.add(instance)
-        session.commit()
-        return instance
+    Fetch all unpublished messages from Contentful, compile them into a blogpost, and publish.
 
-
-def store_new_message(message_form):
-    print(message_form)
-
-    user = get_or_create(models.User, number=message_form['From'])
-    body = message_form['Body']
-
-    body, tags = parse_message(body)
-    msg = models.Message(body=body,
-                         user=user,
-                         sent=datetime.now(),
-                         received=datetime.now(),
-                         tags=tags)
-
-    models.db.add(msg)
-    models.db.commit()
-
-    # As an experiment, we'll also add it to contentful
-    new_entry = {'content_type_id': 'whatsAppMessage',
-                 'fields': dict(body=body, from=message_form['From'], timestamp_received=datetime.now())}}
-
-def parse_message(message):
-    """
-
-    :param message: text of a whatsapp message
     :return:
     """
+    new_messages = contentful_utils.get_all_unpublished_messages()
+    new_messages = [WhatsAppMessage(contentful_to_dict(m)) for m in new_messages]
 
-    tags = [t for t in message.split() if '#' in t]
-    body = [t for t in message.split() if '#' not in t]
+    post = Post(messages=new_messages)
+    contentful_utils.upload_post_to_contentful(post)
 
-    tag_list = []
-    for tag in tags:
-        tag_list.append(get_or_create(models.Tag, value=tag))
 
-    return body, tags
+def handle_new_message(message_dict):
+    """
+
+    Processes a new message, storing it in Contentful and triggering any other necessary actions.
+
+    :param message_dict:
+    :return:
+
+    """
+
+    message = WhatsAppMessage(message_dict)
+    if message.publish:
+        build_and_publish_post()
+    else:
+        contentful_utils.upload_message_to_contentful(message)
+
+
 

@@ -1,48 +1,62 @@
-"""
-SQLAlchemy models
-"""
+from contentful_management import Entry
 
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+import constants
 
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////tmp/test.db"
+import re
 
-db = SQLAlchemy(app)
-
-tags = db.Table(
-    "tags",
-    db.Column("tag_id", db.Integer, db.ForeignKey("tag.id"), primary_key=True),
-    db.Column("message_id", db.Integer, db.ForeignKey("message.id"), primary_key=True),
-)
+from dataclasses import dataclass
+from typing import List
 
 
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    number = db.Column(db.String(120), unique=True, nullable=False)
-    messages = db.relationship("Message", backref="user", lazy=True)
+def remove_hashtags(text):
+    return re.sub(constants.TAG_REGEX, '', text)
 
 
-class Post(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    created = db.Column(db.DateTime, nullable=False)
-    title = db.Column(db.String(1000), nullable=False)
-    messages = db.relationship("Message", backref="post")
+def find_hashtags(text):
+    return re.findall(constants.TAG_REGEX, text)
 
 
-class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.String(10000000), nullable=False)
-    sent = db.Column(db.DateTime, nullable=False)
-    received = db.Column(db.DateTime, nullable=False)
-
-    user_number = db.Column(db.String, db.ForeignKey("user.number"))
-
-    post_id = db.Column(db.Integer, db.ForeignKey("post.id"))
-
-    tags = db.relationship("Tag", secondary=tags, backref=db.backref("messages"))
+def contentful_to_dict(entry):
+    return {'Body': entry.body,
+            'From': entry.sender}
 
 
-class Tag(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(1000), nullable=False)
+@dataclass
+class WhatsAppMessage:
+    raw: dict
+
+    def __post_init__(self):
+        self.body = remove_hashtags(self.raw['Body'])
+        self.tags = find_hashtags(self.raw['Body'])
+        self.sender = self.raw['From']
+
+    @property
+    def publish(self):
+        return "#publish" in self.tags
+
+    @property
+    def assets(self):
+        return None
+
+    @property
+    def title(self):
+        return '#title' in self.tags
+
+
+@dataclass
+class Post:
+    messages: List[Entry]
+
+    def __post_init__(self):
+        self.body = '\n'.join([m.body for m in self.messages])
+
+    @property
+    def title(self):
+        """
+        Find the latest message which included #title and use that.
+        """
+        for message in self.messages:
+            if message.title:
+                return message.body
+
+        return 'Dummy Title'

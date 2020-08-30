@@ -18,7 +18,7 @@ class Post(SQLAlchemyObjectType):
 
 class Message(SQLAlchemyObjectType):
     class Meta:
-        model = models.Message
+        model = models.WhatsAppMessage
 
 
 class Tag(SQLAlchemyObjectType):
