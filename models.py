@@ -6,7 +6,7 @@ import re
 
 from dataclasses import dataclass
 from typing import List
-
+import random
 
 def remove_hashtags(text):
     return re.sub(constants.TAG_REGEX, '', text)
@@ -59,4 +59,8 @@ class Post:
             if message.title:
                 return remove_hashtags(message.body)
 
-        return 'Dummy Title2'
+        return f'Post {random.randint(0, 100000)}'
+
+    @property
+    def slug(self):
+        return self.title.lower().replace(' ', '-')

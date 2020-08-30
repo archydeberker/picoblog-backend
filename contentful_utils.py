@@ -46,8 +46,9 @@ def upload_message_to_contentful(message: WhatsAppMessage):
 
 def archive_messages(messages: List[Entry]):
     for entry in messages:
-        try:
+        if entry.is_published:
             entry.unpublish()
+        try:
             entry.archive()
         except Exception as e:
             print(e)
@@ -59,7 +60,8 @@ def upload_post_to_contentful(post: Post):
         "content_type_id": CONTENTFUL_POST_TYPE,
         "fields": {
             "body": {"en-US": post.body},
-            "title": {'en-US': post.title}
+            "title": {'en-US': post.title},
+            "slug": {'en-US': post.slug},
         },
     }
 
