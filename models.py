@@ -55,7 +55,7 @@ class WhatsAppMessage:
 
 @dataclass
 class Post:
-    messages: List[Entry]
+    messages: List[WhatsAppMessage]
 
     def __post_init__(self):
         self.body = '\n \n'.join([remove_hashtags(m.body) for m in self.messages])
