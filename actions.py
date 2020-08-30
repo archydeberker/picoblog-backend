@@ -12,11 +12,13 @@ def build_and_publish_post():
 
     :return:
     """
-    new_messages = contentful_utils.get_all_unpublished_messages()
-    new_messages = [WhatsAppMessage(contentful_to_dict(m)) for m in new_messages]
+    messages = contentful_utils.get_all_unpublished_messages()
+    new_messages = [WhatsAppMessage(contentful_to_dict(m)) for m in messages]
 
     post = Post(messages=new_messages)
     contentful_utils.upload_post_to_contentful(post)
+
+    return messages
 
 
 def handle_new_message(message_dict):
@@ -31,9 +33,8 @@ def handle_new_message(message_dict):
 
     message = WhatsAppMessage(message_dict)
     if message.publish:
-        build_and_publish_post()
+        included_messages = build_and_publish_post()
+        contentful_utils.archive_messages(included_messages)
     else:
         contentful_utils.upload_message_to_contentful(message)
-
-
 

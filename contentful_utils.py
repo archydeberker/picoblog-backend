@@ -1,7 +1,9 @@
 import random
 from datetime import datetime
+from typing import List
 
 import contentful_management
+from contentful import Entry
 
 from constants import CONTENTFUL_WHATSAPP_TYPE, CONTENTFUL_POST_TYPE
 from models import WhatsAppMessage, Post
@@ -24,7 +26,7 @@ def upload_asset_to_contentful():
 def get_all_unpublished_messages():
     messages = environment.entries().all()
     return [m for m in messages if m.content_type.id ==
-            CONTENTFUL_WHATSAPP_TYPE]
+            CONTENTFUL_WHATSAPP_TYPE and not m.is_published]
 
 
 def upload_message_to_contentful(message: WhatsAppMessage):
@@ -40,6 +42,13 @@ def upload_message_to_contentful(message: WhatsAppMessage):
     new_entry = environment.entries().create(generate_new_entry_id(), new_entry)
 
     new_entry.save()
+
+
+def archive_messages(messages: List[Entry]):
+    for entry in messages:
+        # entry.publish()
+        entry.archive()
+        # entry.save()
 
 
 def upload_post_to_contentful(post: Post):

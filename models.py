@@ -18,7 +18,7 @@ def find_hashtags(text):
 
 def contentful_to_dict(entry):
     return {'Body': entry.body,
-            'From': entry.sender}
+            'From': None}
 
 
 @dataclass
@@ -59,4 +59,4 @@ class Post:
             if message.title:
                 return message.body
 
-        return 'Dummy Title'
+        return 'Dummy Title2'

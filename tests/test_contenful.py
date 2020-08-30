@@ -1,7 +1,8 @@
 from datetime import datetime
 from constants import TIME_FORMAT
-from contentful_utils import environment
+from contentful_utils import environment, archive_messages
 from actions import build_and_publish_post
+
 
 def test_new_message_creation():
     entry = {
@@ -16,4 +17,5 @@ def test_new_message_creation():
 
 
 def test_new_post_creation():
-    build_and_publish_post()
+    included_messages = build_and_publish_post()
+    archive_messages(included_messages)
