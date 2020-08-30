@@ -48,7 +48,7 @@ class Post:
     messages: List[Entry]
 
     def __post_init__(self):
-        self.body = '\n'.join([remove_hashtags(m.body) for m in self.messages])
+        self.body = '\n \n'.join([remove_hashtags(m.body) for m in self.messages])
 
     @property
     def title(self):
