@@ -51,29 +51,32 @@ def upload_assets_to_contentful(media: Media):
     new_asset = environment.assets().create(media.title, file_attributes)
 
     new_asset.process()
-    new_asset.publish()
+
+    # For some reason we have to re-retrieve the asset?
+    asset = environment.assets().find(new_asset.title)
+    asset.publish()
+
+    return asset.id
 
 
 def get_all_unpublished_messages():
     messages = environment.entries().all()
-    return [
-        m
-        for m in messages
-        if m.content_type.id == CONTENTFUL_WHATSAPP_TYPE and not m.is_archived
-    ]
+    return [m for m in messages if m.content_type.id == CONTENTFUL_WHATSAPP_TYPE and not m.is_archived]
 
 
 def upload_message_to_contentful(message: WhatsAppMessage):
-    new_entry = {
-        "content_type_id": CONTENTFUL_WHATSAPP_TYPE,
-        "fields": {
-            "body": {"en-US": message.body},
-            "from": {"en-US": message.sender},
-            "received": {"en-US": datetime.now().strftime(TIME_FORMAT)},
-        },
+    fields = {
+        "body": {"en-US": message.body},
+        "from": {"en-US": message.sender},
+        "received": {"en-US": datetime.now().strftime(TIME_FORMAT)},
     }
 
-    new_entry = environment.entries().create(generate_new_entry_id(), new_entry)
+    if message.media:
+        fields.update({"media": {"en-US": [{"sys": {"type": "Link", "linkType": "Asset", "id": message.media.id}}]}})
+
+    new_entry = {"content_type_id": CONTENTFUL_WHATSAPP_TYPE, "fields": fields}
+
+    new_entry = environment.entries().create('1233445', new_entry)
 
     new_entry.save()
 
