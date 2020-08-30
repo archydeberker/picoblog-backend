@@ -20,6 +20,7 @@ def build_and_publish_post():
     new_messages = [WhatsAppMessage(contentful_to_dict(m)) for m in messages]
 
     post = Post(messages=new_messages)
+
     contentful_utils.upload_post_to_contentful(post)
 
     return messages
@@ -41,5 +42,6 @@ def handle_new_message(message_dict):
         included_messages = build_and_publish_post()
         contentful_utils.archive_messages(included_messages)
     else:
+        contentful_utils.upload_asset_to_contentful(message)
         contentful_utils.upload_message_to_contentful(message)
 

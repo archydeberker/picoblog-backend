@@ -6,7 +6,7 @@ import contentful_management
 from contentful import Entry
 
 from constants import CONTENTFUL_WHATSAPP_TYPE, CONTENTFUL_POST_TYPE, TIME_FORMAT, CONTENTFUL_TOKEN
-from models import WhatsAppMessage, Post
+from models import WhatsAppMessage, Post, Media
 
 client = contentful_management.Client(CONTENTFUL_TOKEN)
 
@@ -19,8 +19,36 @@ def generate_new_entry_id():
     return str(random.randint(1, 1000))
 
 
-def upload_asset_to_contentful():
-    pass
+def upload_assets_to_contentful(media: Media):
+    """
+    Before we're able to create a post with attached media objects, we need to upload the asset to Contentful and
+    retrieve an asset ID for it. We can then use that ID to attach images to posts.
+    :param post:
+    :return:
+    """
+    if media is None:
+        return
+
+    file_attributes = {
+        'fields': {
+            'file': {
+                'en-US': {
+                    'fileName': media.title,
+                    'contentType': media.content_type,
+                    'upload': media.url,
+                }
+            },
+            'title': {'en-US': media.title},
+            'description': {'en-US': media.owner},
+        }
+    }
+
+    new_asset = environment.assets().create(
+        media.title,
+        file_attributes
+    )
+
+    new_asset.process()
 
 
 def get_all_unpublished_messages():

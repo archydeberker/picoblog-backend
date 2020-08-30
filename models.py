@@ -30,6 +30,16 @@ class WhatsAppMessage:
         self.tags = find_hashtags(self.raw['Body'])
         self.sender = self.raw['From']
 
+        if self.raw['NumMedia'] > 0:
+            # I haven't managed to send multiple files combined yet, not sure why
+            # Any media items are available from Twilio at this URL
+            self.media = Media(url=self.raw.get('MediaUrl0'),
+                               content_type=self.raw.get('MediaContentType0'),
+                               title= self.raw.get('MediaUrl0').split('/')[-1],
+                               owner=self.sender)
+        else:
+            self.media = None
+
     @property
     def publish(self):
         return "#publish" in self.tags
@@ -64,3 +74,12 @@ class Post:
     @property
     def slug(self):
         return self.title.lower().replace(' ', '-')
+
+
+@dataclass
+class Media:
+    url: str
+    content_type: str
+    title: str
+    owner: str
+
