@@ -42,6 +42,7 @@ def handle_new_message(message_dict):
         included_messages = build_and_publish_post()
         contentful_utils.archive_messages(included_messages)
     else:
-        asset_id = contentful_utils.upload_assets_to_contentful(message.media)
-        message.media.id = asset_id
+        if message.media:
+            asset_id = contentful_utils.upload_assets_to_contentful(message.media)
+            message.media.id = asset_id
         contentful_utils.upload_message_to_contentful(message)
