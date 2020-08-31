@@ -1,4 +1,5 @@
 import random
+import time
 from datetime import datetime
 from typing import List
 
@@ -52,7 +53,8 @@ def upload_assets_to_contentful(media: Media):
 
     new_asset.process()
 
-    # For some reason we have to re-retrieve the asset?
+    # For some reason we have to re-retrieve the asset? Wait 5 seconds to allow it to be uploaded first.
+    time.sleep(5)
     asset = environment.assets().find(new_asset.title)
     asset.publish()
 
