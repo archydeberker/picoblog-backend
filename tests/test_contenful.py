@@ -2,7 +2,7 @@ from datetime import datetime
 from constants import TIME_FORMAT
 from contentful_utils import environment, archive_messages, upload_assets_to_contentful, upload_message_to_contentful
 from actions import build_and_publish_post, handle_new_message
-from models import Media
+from models import TwilioMedia
 
 
 def test_new_message_creation():
@@ -43,7 +43,7 @@ def test_creating_new_message_with_new_media():
                'From': 'A test number',
                'NumMedia': '1',
                'MediaContentType0': 'img/jpeg',
-               'MediaUrl0': 'https://images.unsplash.com/photo-1598787643262-8cb070483597?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1164&q=80'}
+               'MediaUrl0': 'https://source.unsplash.com/random'}
 
     handle_new_message(raw_msg)
 
@@ -54,7 +54,7 @@ def test_new_post_creation():
 
 
 def test_media_creation():
-    new_media = Media(
+    new_media = TwilioMedia(
         url="https://api.twilio.com/2010-04-01/Accounts/AC4fe532def6dbef2698bdf45bda6118fe/Messages/MM1a174bfeb039067dadfc3e6dce72131c/Media/ME3f776cb7a25808dc38c5b6b12235009b",
         content_type="image/jpeg",
         title="test_upload2",

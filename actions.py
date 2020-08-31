@@ -1,5 +1,5 @@
 import contentful_utils
-from models import WhatsAppMessage, Post, contentful_to_dict
+from models import TwilioWhatsAppMessage, ContentfulPost, contentful_entry_to_class
 
 
 def extract_assets(message_dict):
@@ -17,9 +17,9 @@ def build_and_publish_post():
         print("Aborting, no new messages")
         return []
 
-    new_messages = [WhatsAppMessage(contentful_to_dict(m)) for m in messages]
+    new_messages = [contentful_entry_to_class(m) for m in messages]
 
-    post = Post(messages=new_messages)
+    post = ContentfulPost(messages=new_messages)
 
     contentful_utils.upload_post_to_contentful(post)
 
@@ -36,7 +36,7 @@ def handle_new_message(message_dict):
 
     """
 
-    message = WhatsAppMessage(message_dict)
+    message = TwilioWhatsAppMessage(message_dict)
     if message.publish:
         print("Found publish trigger")
         included_messages = build_and_publish_post()

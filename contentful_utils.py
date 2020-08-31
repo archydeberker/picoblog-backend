@@ -14,7 +14,7 @@ from constants import (
     CONTENTFUL_SPACE,
     CONTENTFUL_ENVIRONTMENT_ID,
 )
-from models import WhatsAppMessage, Post, Media
+from models import TwilioWhatsAppMessage, ContentfulPost, TwilioMedia
 
 client = contentful_management.Client(CONTENTFUL_TOKEN)
 
@@ -25,7 +25,7 @@ def generate_new_entry_id():
     return str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
 
 
-def upload_assets_to_contentful(media: Media):
+def upload_assets_to_contentful(media: TwilioMedia):
     """
     Before we're able to create a post with attached media objects, we need to upload the asset to Contentful and
     retrieve an asset ID for it. We can then use that ID to attach images to posts.
@@ -70,7 +70,7 @@ def get_all_unpublished_messages():
     return [m for m in messages if m.content_type.id == CONTENTFUL_WHATSAPP_TYPE and not m.is_archived]
 
 
-def upload_message_to_contentful(message: WhatsAppMessage):
+def upload_message_to_contentful(message: TwilioWhatsAppMessage):
     fields = {
         "body": {"en-US": message.body},
         "from": {"en-US": message.sender},
@@ -98,7 +98,7 @@ def archive_messages(messages: List[Entry]):
             print("Failed to archive")
 
 
-def upload_post_to_contentful(post: Post):
+def upload_post_to_contentful(post: ContentfulPost):
     fields  = {
             "body": {"en-US": post.body},
             "title": {"en-US": post.title},

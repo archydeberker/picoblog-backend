@@ -5,7 +5,7 @@ import constants
 import re
 
 from dataclasses import dataclass
-from typing import List
+from typing import List, Union
 import random
 
 
@@ -17,12 +17,35 @@ def find_hashtags(text):
     return [tag.strip() for tag in re.findall(constants.TAG_REGEX, text)]
 
 
-def contentful_to_dict(entry):
-    return {"Body": entry.body, "From": None}
+def contentful_entry_to_class(entry):
+
+    # Convert media fields
+    content_dict = entry.fields()
+    media = content_dict.get('media')
+    if media is not None:
+        # Only support a single entry for now
+        media = ContentfulMedia(id=media[0].id)
+
+    return ContentfulWhatsAppMessage(body=content_dict['body'],
+                                     author=content_dict['from'],
+                                     media=media)
 
 
 @dataclass
-class WhatsAppMessage:
+class TwilioMedia:
+    url: str
+    content_type: str
+    title: str
+    owner: str
+
+
+@dataclass
+class ContentfulMedia:
+    id: str
+
+
+@dataclass
+class TwilioWhatsAppMessage:
     raw: dict
 
     def __post_init__(self):
@@ -33,7 +56,7 @@ class WhatsAppMessage:
         num_media = self.raw.get("NumMedia") or 0
         if int(num_media) > 0:
             # I haven't managed to send multiple files combined yet, not sure why
-            self.media = Media(
+            self.media = TwilioMedia(
                 url=self.raw.get("MediaUrl0"),
                 content_type=self.raw.get("MediaContentType0"),
                 title=self.raw.get("MediaUrl0").split("/")[-1],
@@ -56,8 +79,22 @@ class WhatsAppMessage:
 
 
 @dataclass
-class Post:
-    messages: List[WhatsAppMessage]
+class ContentfulWhatsAppMessage:
+    body: str
+    media: Union[ContentfulMedia, None]
+    author: str
+
+    def __post_init__(self):
+        self.tags = find_hashtags(self.body)
+
+    @property
+    def title(self):
+        return "#title" in self.tags
+
+
+@dataclass
+class ContentfulPost:
+    messages: List[ContentfulWhatsAppMessage]
 
     def __post_init__(self):
         self.body = "\n \n".join([remove_hashtags(m.body) for m in self.messages])
@@ -80,11 +117,3 @@ class Post:
     @property
     def media(self):
         return [m.media for m in self.messages if m.media]
-
-
-@dataclass
-class Media:
-    url: str
-    content_type: str
-    title: str
-    owner: str
