@@ -99,14 +99,23 @@ def archive_messages(messages: List[Entry]):
 
 
 def upload_post_to_contentful(post: Post):
-    new_entry = {
-        "content_type_id": CONTENTFUL_POST_TYPE,
-        "fields": {
+    fields  = {
             "body": {"en-US": post.body},
             "title": {"en-US": post.title},
             "slug": {"en-US": post.slug},
             "publishDate": {"en-US": datetime.now().strftime(TIME_FORMAT)},
-        },
+        }
+
+    if len(post.media) > 0:
+        media_list = []
+        for media in post.media:
+            media_list.append({"sys": {"type": "Link", "linkType": "Asset", "id": media.id}})
+
+        fields.update({"media": {"en-US": media_list}})
+
+    new_entry = {
+        "content_type_id": CONTENTFUL_POST_TYPE,
+        "fields": fields,
     }
 
     new_entry = environment.entries().create(generate_new_entry_id(), new_entry)

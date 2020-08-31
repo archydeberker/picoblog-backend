@@ -77,6 +77,10 @@ class Post:
     def slug(self):
         return self.title.lower().replace(" ", "-")
 
+    @property
+    def media(self):
+        return [m.media for m in self.messages if m.media]
+
 
 @dataclass
 class Media:
