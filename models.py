@@ -120,4 +120,4 @@ class ContentfulPost:
 
     @property
     def cover(self):
-        return [m.media for m in self.messages if "#coverimage" in m.tags][0]
+        return [m.media for m in self.messages if "#coverimage" in m.tags] or None

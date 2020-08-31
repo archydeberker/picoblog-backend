@@ -113,8 +113,8 @@ def upload_post_to_contentful(post: ContentfulPost):
 
         fields.update({"media": {"en-US": media_list}})
 
-    if len(post.cover) > 0:
-        fields.update({"coverImage": {"sys": {"type": "Link", "linkType": "Asset", "id": post.cover.id}}})
+    if post.cover:
+        fields.update({"coverImage": {"sys": {"type": "Link", "linkType": "Asset", "id": post.cover[0].id}}})
 
     new_entry = {
         "content_type_id": CONTENTFUL_POST_TYPE,
