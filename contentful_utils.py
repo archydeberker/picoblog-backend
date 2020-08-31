@@ -56,7 +56,11 @@ def upload_assets_to_contentful(media: Media):
     # For some reason we have to re-retrieve the asset? Wait 5 seconds to allow it to be uploaded first.
     time.sleep(5)
     asset = environment.assets().find(new_asset.title)
+    print(f"Asset to be published is {asset}")
     asset.publish()
+
+    # Wait for publishing to take effect before returning
+    time.sleep(5)
 
     return asset.id
 
