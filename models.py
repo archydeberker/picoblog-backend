@@ -14,7 +14,7 @@ def remove_hashtags(text):
 
 
 def find_hashtags(text):
-    return [tag.strip() for tag in re.findall(constants.TAG_REGEX, text)]
+    return [tag.strip().lower() for tag in re.findall(constants.TAG_REGEX, text)]
 
 
 def contentful_entry_to_class(entry):
@@ -117,3 +117,7 @@ class ContentfulPost:
     @property
     def media(self):
         return [m.media for m in self.messages if m.media]
+
+    @property
+    def cover(self):
+        return [m.media for m in self.messages if "#coverimage" in m.tags][0]

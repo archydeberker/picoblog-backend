@@ -26,6 +26,14 @@ def build_and_publish_post():
     return messages
 
 
+def handle_triggers(message):
+
+    if message.publish:
+        print("Found publish trigger")
+        included_messages = build_and_publish_post()
+        contentful_utils.archive_messages(included_messages)
+
+
 def handle_new_message(message_dict):
     """
 
@@ -37,10 +45,8 @@ def handle_new_message(message_dict):
     """
 
     message = TwilioWhatsAppMessage(message_dict)
-    if message.publish:
-        print("Found publish trigger")
-        included_messages = build_and_publish_post()
-        contentful_utils.archive_messages(included_messages)
+    if len(message.tags) > 0:
+        handle_triggers(message)
     else:
         if message.media:
             asset_id = contentful_utils.upload_assets_to_contentful(message.media)
