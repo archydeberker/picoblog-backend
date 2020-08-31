@@ -82,7 +82,7 @@ def upload_message_to_contentful(message: WhatsAppMessage):
 
     new_entry = {"content_type_id": CONTENTFUL_WHATSAPP_TYPE, "fields": fields}
 
-    new_entry = environment.entries().create('1233445', new_entry)
+    new_entry = environment.entries().create(generate_new_entry_id(), new_entry)
 
     new_entry.save()
 
