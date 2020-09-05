@@ -42,11 +42,12 @@ def add_location_to_user(location: str, user: ContentfulUser):
     user_object.save()
 
 
-def create_user(number: str, name: str = None):
-    user = ContentfulUser(number=number, name=name)
+def create_user(number: str, name: str = None, location: str = None):
+    user = ContentfulUser(number=number, name=name, location=location)
     fields = {
         "number": {"en-US": user.number},
         "name": {"en-US": user.name},
+        "location": {"en-US": user.location},
     }
 
     new_entry = {"content_type_id": CONTENTFUL_USER_TYPE, "fields": fields}
