@@ -108,7 +108,7 @@ class ContentfulPost:
     messages: List[ContentfulWhatsAppMessage]
 
     def __post_init__(self):
-        self.body = "\n \n".join([remove_hashtags(m.body) for m in reversed(self.messages)])
+        self.body = "\n \n".join([m.body for m in reversed(self.messages) if not m.title])
 
     @property
     def title(self):
