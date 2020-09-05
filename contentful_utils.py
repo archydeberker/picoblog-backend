@@ -13,7 +13,8 @@ from constants import (
     CONTENTFUL_TOKEN,
     CONTENTFUL_SPACE,
     CONTENTFUL_ENVIRONTMENT_ID,
-    CONTENTFUL_USER_TYPE)
+    CONTENTFUL_USER_TYPE,
+)
 from models import TwilioWhatsAppMessage, ContentfulPost, TwilioMedia, ContentfulUser
 
 client = contentful_management.Client(CONTENTFUL_TOKEN)
@@ -22,19 +23,31 @@ environment = client.environments(CONTENTFUL_SPACE).find(CONTENTFUL_ENVIRONTMENT
 
 
 def _format_number(number):
-    return number.replace(':+', '_')
+    return number.replace(":+", "_")
 
 
 def find_user(number: str):
     entries = client.entries(CONTENTFUL_SPACE, CONTENTFUL_ENVIRONTMENT_ID)
-    print(f'Finding user {_format_number(number)}')
+    print(f"Finding user {_format_number(number)}")
     try:
         return entries.find(_format_number(number))
     except contentful_management.errors.NotFoundError:
         return None
 
 
-def create_user(number: str, name: str=None):
+def add_name_to_user(name: str, user: ContentfulUser):
+    user_object = find_user(_format_number(user.number))
+    user_object.name = name
+    user_object.save()
+
+
+def add_location_to_user(location: str, user: ContentfulUser):
+    user_object = find_user(_format_number(user.number))
+    user_object.location = location
+    user_object.save()
+
+
+def create_user(number: str, name: str = None):
     user = ContentfulUser(number=_format_number(number), name=name)
     fields = {
         "number": {"en-US": user.number},
@@ -103,14 +116,10 @@ def get_all_unpublished_messages():
 
 def get_all_users():
     messages = environment.entries().all()
-    return [m for m in messages if m.content_type.id == 'user' and not m.is_archived]
+    return [m for m in messages if m.content_type.id == "user" and not m.is_archived]
 
 
-def upload_message_to_contentful(message: TwilioWhatsAppMessage):
-    user = find_user(message.sender)
-    if user is None:
-        print('No user found, creating a new one')
-        user = create_user(message.sender)
+def upload_message_to_contentful(message: TwilioWhatsAppMessage, user: ContentfulUser):
 
     fields = {
         "body": {"en-US": message.body},
@@ -142,12 +151,12 @@ def archive_messages(messages: List[Entry]):
 
 def upload_post_to_contentful(post: ContentfulPost):
     fields = {
-            "body": {"en-US": post.body},
-            "title": {"en-US": post.title},
-            "slug": {"en-US": post.slug},
-            "publishDate": {"en-US": datetime.now().strftime(TIME_FORMAT)},
-            "user": {"en-US":{"sys": {"type": "Link", "linkType": "Entry", "id": post.user.id}}}
-        }
+        "body": {"en-US": post.body},
+        "title": {"en-US": post.title},
+        "slug": {"en-US": post.slug},
+        "publishDate": {"en-US": datetime.now().strftime(TIME_FORMAT)},
+        "user": {"en-US": {"sys": {"type": "Link", "linkType": "Entry", "id": post.user.id}}},
+    }
 
     if len(post.media) > 0:
         media_list = []

@@ -81,6 +81,14 @@ class TwilioWhatsAppMessage:
         return "#publish" in self.tags
 
     @property
+    def name(self):
+        return "#name" in self.tags
+
+    @property
+    def location(self):
+        return "#location" in self.tags
+
+    @property
     def assets(self):
         return None
 
