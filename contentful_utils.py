@@ -109,6 +109,7 @@ def get_all_users():
 def upload_message_to_contentful(message: TwilioWhatsAppMessage):
     user = find_user(message.sender)
     if user is None:
+        print('No user found, creating a new one')
         user = create_user(message.sender)
 
     fields = {

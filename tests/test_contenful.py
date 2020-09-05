@@ -51,7 +51,7 @@ def test_creating_new_message_with_new_media():
 
 def test_creating_new_message_with_new_user():
     raw_msg = {'Body': 'A nice new test message',
-               'From': 'whatsapp:test',
+               'From': 'whatsapp:test_try_again',
                'NumMedia': '0'}
 
     handle_new_message(raw_msg)
