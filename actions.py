@@ -71,11 +71,11 @@ def handle_new_message(message_dict):
             twilio_utils.send_message(Onboarding.need_location, user)
         else:
             # We still need their name!
-            twilio_utils.send_message(remove_hashtags(Onboarding.need_name), user)
+            twilio_utils.send_message(Onboarding.need_name, user)
 
     if user.location is None:
         if message.location:
-            contentful_utils.add_location_to_user(message.location, user)
+            contentful_utils.add_location_to_user(remove_hashtags(message.body), user)
             [twilio_utils.send_message(m, user=user) for m in Onboarding.onboarding_complete]
         else:
             # We still need their location!
