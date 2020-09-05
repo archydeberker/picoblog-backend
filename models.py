@@ -49,6 +49,7 @@ class ContentfulMedia:
 class ContentfulUser:
     number: str
     name: str = None
+    location: str = None
 
     @property
     def id(self):
