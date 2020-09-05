@@ -48,7 +48,10 @@ class ContentfulMedia:
 class ContentfulUser:
     name: str
     number: str
-    id: str
+
+    @property
+    def id(self):
+        return self.number
 
 
 @dataclass

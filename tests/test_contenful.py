@@ -1,6 +1,7 @@
 from datetime import datetime
 from constants import TIME_FORMAT
-from contentful_utils import environment, archive_messages, upload_assets_to_contentful, upload_message_to_contentful
+from contentful_utils import environment, archive_messages, upload_assets_to_contentful, upload_message_to_contentful, \
+    find_user
 from actions import build_and_publish_post, handle_new_message
 from models import TwilioMedia
 
@@ -48,6 +49,14 @@ def test_creating_new_message_with_new_media():
     handle_new_message(raw_msg)
 
 
+def test_creating_new_message_with_new_user():
+    raw_msg = {'Body': 'A nice new test message',
+               'From': 'whatsapp:test',
+               'NumMedia': '0'}
+
+    handle_new_message(raw_msg)
+
+
 def test_new_post_creation():
     included_messages = build_and_publish_post()
     archive_messages(included_messages)
@@ -62,3 +71,8 @@ def test_media_creation():
     )
 
     upload_assets_to_contentful(new_media)
+
+
+def test_find_user_when_does_not_exist():
+    user = find_user('sdsd')
+    assert user is None

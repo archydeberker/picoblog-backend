@@ -21,17 +21,21 @@ client = contentful_management.Client(CONTENTFUL_TOKEN)
 environment = client.environments(CONTENTFUL_SPACE).find(CONTENTFUL_ENVIRONTMENT_ID)
 
 
+def _format_number(number):
+    return number.replace(':', '_')
+
+
 def find_user(number: str):
     entries = client.entries(CONTENTFUL_SPACE, CONTENTFUL_ENVIRONTMENT_ID)
-    print(f'Finding user {number}')
+    print(f'Finding user {_format_number(number)}')
     try:
-        return entries.find(number)
-    except (contentful_management.errors.NotFoundError, contentful_management.errors.BadRequestError):
+        return entries.find(_format_number(number))
+    except contentful_management.errors.NotFoundError:
         return None
 
 
 def create_user(number: str, name: str=None):
-    user = ContentfulUser(number=number, name=name, id=number)
+    user = ContentfulUser(number=_format_number(number), name=name)
     fields = {
         "number": {"en-US": user.number},
         "name": {"en-US": user.name},
@@ -42,6 +46,10 @@ def create_user(number: str, name: str=None):
     new_entry = environment.entries().create(user.id, new_entry)
 
     new_entry.save()
+
+    new_entry.publish()
+
+    return user
 
 
 def generate_new_entry_id():
@@ -101,13 +109,13 @@ def get_all_users():
 def upload_message_to_contentful(message: TwilioWhatsAppMessage):
     user = find_user(message.sender)
     if user is None:
-        create_user(message.sender)
+        user = create_user(message.sender)
 
     fields = {
         "body": {"en-US": message.body},
-        "sender": {"en-US": message.sender},
+        "from": {"en-US": message.sender},
         "received": {"en-US": datetime.now().strftime(TIME_FORMAT)},
-        "user": {"en-US": [{"sys": {"type": "Link", "linkType": "Asset", "id": user.id}}]}
+        "user": {"en-US": {"sys": {"type": "Link", "linkType": "Entry", "id": user.id}}},
     }
 
     if message.media:
@@ -137,7 +145,7 @@ def upload_post_to_contentful(post: ContentfulPost):
             "title": {"en-US": post.title},
             "slug": {"en-US": post.slug},
             "publishDate": {"en-US": datetime.now().strftime(TIME_FORMAT)},
-            "user": {"en-US": [{"sys": {"type": "Link", "linkType": "Asset", "id": post.user.id}}]}
+            "user": {"en-US":{"sys": {"type": "Link", "linkType": "Entry", "id": post.user.id}}}
         }
 
     if len(post.media) > 0:
