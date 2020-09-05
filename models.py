@@ -27,7 +27,8 @@ def contentful_entry_to_class(entry):
         media = ContentfulMedia(id=media[0].id)
 
     return ContentfulWhatsAppMessage(body=content_dict['body'],
-                                     author=content_dict['from'],
+                                     user=ContentfulUser(number=content_dict['user'].id,
+                                                         name=content_dict['user'].id),
                                      media=media)
 
 
@@ -46,8 +47,8 @@ class ContentfulMedia:
 
 @dataclass
 class ContentfulUser:
-    name: str
     number: str
+    name: str
 
     @property
     def id(self):
