@@ -1,4 +1,3 @@
-import random
 import time
 from datetime import datetime
 from typing import List
@@ -15,15 +14,11 @@ from constants import (
     CONTENTFUL_ENVIRONTMENT_ID,
     CONTENTFUL_USER_TYPE,
 )
-from models import TwilioWhatsAppMessage, ContentfulPost, TwilioMedia, ContentfulUser
+from models import TwilioWhatsAppMessage, ContentfulPost, TwilioMedia, ContentfulUser, _format_number
 
 client = contentful_management.Client(CONTENTFUL_TOKEN)
 
 environment = client.environments(CONTENTFUL_SPACE).find(CONTENTFUL_ENVIRONTMENT_ID)
-
-
-def _format_number(number):
-    return number.replace(":+", "_")
 
 
 def find_user(number: str):
@@ -48,7 +43,7 @@ def add_location_to_user(location: str, user: ContentfulUser):
 
 
 def create_user(number: str, name: str = None):
-    user = ContentfulUser(number=_format_number(number), name=name)
+    user = ContentfulUser(number=number, name=name)
     fields = {
         "number": {"en-US": user.number},
         "name": {"en-US": user.name},

@@ -48,11 +48,11 @@ class ContentfulMedia:
 @dataclass
 class ContentfulUser:
     number: str
-    name: str=None
+    name: str = None
 
     @property
     def id(self):
-        return self.number
+        return _format_number(self.number)
 
 
 @dataclass
@@ -87,6 +87,10 @@ class TwilioWhatsAppMessage:
     @property
     def location(self):
         return "#location" in self.tags
+
+    @property
+    def profile (self):
+        return "#profile" in self.tags
 
     @property
     def assets(self):
@@ -144,3 +148,7 @@ class ContentfulPost:
     @property
     def user(self):
         return self.messages[0].user
+
+
+def _format_number(number):
+    return number.replace(":+", "_")
