@@ -1,4 +1,5 @@
 import contentful_utils
+import twilio_utils
 from messages import Onboarding
 from models import TwilioWhatsAppMessage, ContentfulPost, contentful_entry_to_class, ContentfulUser
 
@@ -45,9 +46,6 @@ def get_response(user):
         return None
 
 
-def send_reply(text, user: ContentfulUser):
-    pass
-
 def handle_new_message(message_dict):
     """
 
@@ -65,20 +63,21 @@ def handle_new_message(message_dict):
     if user is None:
         print('No user found, creating a new one')
         user = contentful_utils.create_user(message.sender)
-        send_reply(Onboarding.need_name, user)
+        twilio_utils.send_message(Onboarding.need_name, user)
 
     if message.name:
-        contentful_utils.add_name_to_user(message, user)
-        send_reply(Onboarding.need_location, user)
+        contentful_utils.add_name_to_user(message.name, user)
+        twilio_utils.send_message(Onboarding.need_location, user)
 
     if message.location:
-        contentful_utils.add_location_to_user(message, user)
-        send_reply(Onboarding.onboarding_complete, user)
+        contentful_utils.add_location_to_user(message.location, user)
+        [twilio_utils.send_message(m, user=user) for m in Onboarding.onboarding_complete]
 
     if message.publish:
         handle_triggers(message)
     else:
         if message.media:
-            asset_id = contentful_utils.upload_assets_to_contentful(message.media, user)
+            asset_id = contentful_utils.upload_assets_to_contentful(message.media)
             message.media.id = asset_id
-        contentful_utils.upload_message_to_contentful(message)
+
+        contentful_utils.upload_message_to_contentful(message, user)

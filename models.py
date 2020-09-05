@@ -48,7 +48,7 @@ class ContentfulMedia:
 @dataclass
 class ContentfulUser:
     number: str
-    name: str
+    name: str=None
 
     @property
     def id(self):
