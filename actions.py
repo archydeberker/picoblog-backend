@@ -72,14 +72,18 @@ def handle_new_message(message_dict):
         else:
             # We still need their name!
             twilio_utils.send_message(Onboarding.need_name, user)
+        return None
 
     if user.location is None:
         if message.location:
             contentful_utils.add_location_to_user(remove_hashtags(message.body), user)
+            user = contentful_utils.find_user(message.sender)
+            twilio_utils.send_message(Onboarding.welcome(user.name, user.location), user=user)
             [twilio_utils.send_message(m, user=user) for m in Onboarding.onboarding_complete]
         else:
             # We still need their location!
             twilio_utils.send_message(Onboarding.need_location, user)
+        return None
 
     if message.publish:
         handle_triggers(message)

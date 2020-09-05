@@ -9,7 +9,7 @@ class Onboarding:
 
     onboarding_complete = [
         """
-                🚀Yeeeha, your onboarding is complete. You can now write blogposts. You can send messages and images, and when you're finished, send a message with #publish!
+                Your onboarding is complete. You can now write blogposts. You can send messages and images, and when you're finished, send a message with #publish!
                 """,
         """
                 You can set the title of your blogpost with the tag #title, like '#title The day the teddy bears had their picnic'.
@@ -18,3 +18,7 @@ class Onboarding:
                 Now get out there and have some adventures worth writing about 🧗⛷🚴🗺‍‍
                 """,
     ]
+
+    @staticmethod
+    def welcome(name, location):
+        return f"Welcome, {name} from {location}! 🚀"
