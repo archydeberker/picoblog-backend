@@ -45,6 +45,13 @@ class ContentfulMedia:
 
 
 @dataclass
+class ContentfulUser:
+    name: str
+    number: str
+    id: str
+
+
+@dataclass
 class TwilioWhatsAppMessage:
     raw: dict
 
@@ -82,7 +89,7 @@ class TwilioWhatsAppMessage:
 class ContentfulWhatsAppMessage:
     body: str
     media: Union[ContentfulMedia, None]
-    author: str
+    user: ContentfulUser
 
     def __post_init__(self):
         self.tags = find_hashtags(self.body)
@@ -121,3 +128,7 @@ class ContentfulPost:
     @property
     def cover(self):
         return [m.media for m in self.messages if "#coverimage" in m.tags] or None
+
+    @property
+    def user(self):
+        return self.messages[0].user

@@ -21,6 +21,11 @@ client = contentful_management.Client(CONTENTFUL_TOKEN)
 environment = client.environments(CONTENTFUL_SPACE).find(CONTENTFUL_ENVIRONTMENT_ID)
 
 
+def find_user(number: str):
+    users = get_all_users()
+    return [u for u in users if u.number == number]
+
+
 def generate_new_entry_id():
     return str(int(datetime.now().strftime("%Y%m%d%H%M%S")))
 
@@ -70,11 +75,19 @@ def get_all_unpublished_messages():
     return [m for m in messages if m.content_type.id == CONTENTFUL_WHATSAPP_TYPE and not m.is_archived]
 
 
+def get_all_users():
+    messages = environment.entries().all()
+    return [m for m in messages if m.content_type.id == 'user' and not m.is_archived]
+
+
 def upload_message_to_contentful(message: TwilioWhatsAppMessage):
+    user = find_user(message.sender)[0]
+
     fields = {
         "body": {"en-US": message.body},
-        "from": {"en-US": message.sender},
+        "sender": {"en-US": message.sender},
         "received": {"en-US": datetime.now().strftime(TIME_FORMAT)},
+        "user": {"en-US": [{"sys": {"type": "Link", "linkType": "Asset", "id": user.id}}]}
     }
 
     if message.media:
