@@ -45,7 +45,7 @@ def handle_new_message(message_dict):
     """
 
     message = TwilioWhatsAppMessage(message_dict)
-    if len(message.tags) > 0:
+    if message.publish > 0:
         handle_triggers(message)
     else:
         if message.media:
