@@ -131,11 +131,12 @@ def archive_messages(messages: List[Entry]):
 
 
 def upload_post_to_contentful(post: ContentfulPost):
-    fields  = {
+    fields = {
             "body": {"en-US": post.body},
             "title": {"en-US": post.title},
             "slug": {"en-US": post.slug},
             "publishDate": {"en-US": datetime.now().strftime(TIME_FORMAT)},
+            "user": {"en-US": [{"sys": {"type": "Link", "linkType": "Asset", "id": post.user.id}}]}
         }
 
     if len(post.media) > 0:
