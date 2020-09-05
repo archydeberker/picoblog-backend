@@ -1,7 +1,7 @@
 import contentful_utils
 import twilio_utils
 from messages import Onboarding
-from models import TwilioWhatsAppMessage, ContentfulPost, contentful_entry_to_class, ContentfulUser
+from models import TwilioWhatsAppMessage, ContentfulPost, contentful_entry_to_class, ContentfulUser, remove_hashtags
 
 
 def extract_assets(message_dict):
@@ -67,11 +67,11 @@ def handle_new_message(message_dict):
     if user.name is None:
         if message.name:
             # They've just sent us their name
-            contentful_utils.add_name_to_user(message.name, user)
+            contentful_utils.add_name_to_user(remove_hashtags(message.body), user)
             twilio_utils.send_message(Onboarding.need_location, user)
         else:
             # We still need their name!
-            twilio_utils.send_message(Onboarding.need_name, user)
+            twilio_utils.send_message(remove_hashtags(Onboarding.need_name), user)
 
     if user.location is None:
         if message.location:
