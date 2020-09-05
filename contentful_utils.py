@@ -23,9 +23,10 @@ environment = client.environments(CONTENTFUL_SPACE).find(CONTENTFUL_ENVIRONTMENT
 
 def find_user(number: str):
     entries = client.entries(CONTENTFUL_SPACE, CONTENTFUL_ENVIRONTMENT_ID)
+    print(f'Finding user {number}')
     try:
         return entries.find(number)
-    except contentful_management.errors.NotFoundError:
+    except (contentful_management.errors.NotFoundError, contentful_management.errors.BadRequestError):
         return None
 
 
