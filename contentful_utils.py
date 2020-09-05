@@ -13,8 +13,8 @@ from constants import (
     CONTENTFUL_TOKEN,
     CONTENTFUL_SPACE,
     CONTENTFUL_ENVIRONTMENT_ID,
-)
-from models import TwilioWhatsAppMessage, ContentfulPost, TwilioMedia
+    CONTENTFUL_USER_TYPE)
+from models import TwilioWhatsAppMessage, ContentfulPost, TwilioMedia, ContentfulUser
 
 client = contentful_management.Client(CONTENTFUL_TOKEN)
 
@@ -22,8 +22,25 @@ environment = client.environments(CONTENTFUL_SPACE).find(CONTENTFUL_ENVIRONTMENT
 
 
 def find_user(number: str):
-    users = get_all_users()
-    return [u for u in users if u.number == number]
+    entries = client.entries(CONTENTFUL_SPACE, CONTENTFUL_ENVIRONTMENT_ID)
+    try:
+        return entries.find(number)
+    except contentful_management.errors.NotFoundError:
+        return None
+
+
+def create_user(number: str, name: str=None):
+    user = ContentfulUser(number=number, name=name, id=number)
+    fields = {
+        "number": {"en-US": user.number},
+        "name": {"en-US": user.name},
+    }
+
+    new_entry = {"content_type_id": CONTENTFUL_USER_TYPE, "fields": fields}
+
+    new_entry = environment.entries().create(user.id, new_entry)
+
+    new_entry.save()
 
 
 def generate_new_entry_id():
@@ -81,7 +98,9 @@ def get_all_users():
 
 
 def upload_message_to_contentful(message: TwilioWhatsAppMessage):
-    user = find_user(message.sender)[0]
+    user = find_user(message.sender)
+    if user is None:
+        create_user(message.sender)
 
     fields = {
         "body": {"en-US": message.body},
