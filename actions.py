@@ -63,15 +63,23 @@ def handle_new_message(message_dict):
     if user is None:
         print('No user found, creating a new one')
         user = contentful_utils.create_user(message.sender)
-        twilio_utils.send_message(Onboarding.need_name, user)
 
-    if message.name:
-        contentful_utils.add_name_to_user(message.name, user)
-        twilio_utils.send_message(Onboarding.need_location, user)
+    if user.name is None:
+        if message.name:
+            # They've just sent us their name
+            contentful_utils.add_name_to_user(message.name, user)
+            twilio_utils.send_message(Onboarding.need_location, user)
+        else:
+            # We still need their name!
+            twilio_utils.send_message(Onboarding.need_name, user)
 
-    if message.location:
-        contentful_utils.add_location_to_user(message.location, user)
-        [twilio_utils.send_message(m, user=user) for m in Onboarding.onboarding_complete]
+    if user.location is None:
+        if message.location:
+            contentful_utils.add_location_to_user(message.location, user)
+            [twilio_utils.send_message(m, user=user) for m in Onboarding.onboarding_complete]
+        else:
+            # We still need their location!
+            twilio_utils.send_message(Onboarding.need_location, user)
 
     if message.publish:
         handle_triggers(message)
