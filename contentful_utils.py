@@ -22,7 +22,7 @@ environment = client.environments(CONTENTFUL_SPACE).find(CONTENTFUL_ENVIRONTMENT
 
 
 def _format_number(number):
-    return number.replace(':', '_')
+    return number.replace(':+', '_')
 
 
 def find_user(number: str):
