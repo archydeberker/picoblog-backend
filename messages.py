@@ -21,6 +21,5 @@ class Onboarding:
 
     @staticmethod
     def welcome(user):
-
         return f"Welcome, {user.name} from {user.location} 🚀. Your picoblog is being " \
                f"built at https://http://picoblog.netlify.app/blog/{user.slug} 🛠"

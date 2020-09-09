@@ -34,7 +34,7 @@ def find_user(number: str):
 def add_name_to_user(name: str, user: ContentfulUser):
     user_object = find_user(_format_number(user.number))
     user_object.name = name
-    user.slug = name.replace(' ', '-').replace("'", '-')+user.number[-4:]
+    user_object.slug = name.replace(' ', '-').replace("'", '-')+user.number[-4:]
     user_object.save()
 
 
